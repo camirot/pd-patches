@@ -1,0 +1,18 @@
+--- a/bsd/nfs/nfs_subs.c
++++ b/bsd/nfs/nfs_subs.c
+@@ -896,6 +896,7 @@
+ 	struct nfsm_chain *nmc,
+ 	struct vnode_attr *vap)
+ {
++#pragma unused(nmp)
+ 	int error = 0;
+ 
+ 	if (VATTR_IS_ACTIVE(vap, va_mode)) {
+@@ -1325,6 +1326,7 @@
+ 	int nfsvers,
+ 	struct nfs_vattr *nvap)
+ {
++#pragma unused(nmp)
+ 	int error = 0;
+ 	enum vtype vtype;
+ 	nfstype nvtype;
