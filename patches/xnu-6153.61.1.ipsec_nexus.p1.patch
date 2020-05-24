@@ -8,6 +8,17 @@ diff --git a/bsd/net/if_ipsec.c b/bsd/net/if_ipsec.c
 index e967cad..17aba18 100644
 --- a/bsd/net/if_ipsec.c
 +++ b/bsd/net/if_ipsec.c
+@@ -234,8 +234,10 @@
+ #define IPSEC_FLAGS_KPIPE_ALLOCATED 1
+ 
+ /* data movement refcounting functions */
++#if IPSEC_NEXUS
+ static boolean_t ipsec_data_move_begin(struct ipsec_pcb *pcb);
+ static void ipsec_data_move_end(struct ipsec_pcb *pcb);
++#endif
+ static void ipsec_wait_data_move_drain(struct ipsec_pcb *pcb);
+ 
+ /* Data path states */
 @@ -2706,11 +2706,13 @@ ipsec_ctl_connect(kern_ctl_ref kctlref,
  	 * Mark the data path as ready.
  	 * If kpipe nexus is being used then the data path is marked ready only when a kpipe channel is connected.
@@ -22,14 +33,19 @@ index e967cad..17aba18 100644
  
  	/* The interfaces resoures allocated, mark it as running */
  	ifnet_set_flags(pcb->ipsec_ifp, IFF_RUNNING, IFF_RUNNING);
-@@ -234,8 +234,10 @@
- #define IPSEC_FLAGS_KPIPE_ALLOCATED 1
+@@ -4083,6 +4083,7 @@
+ 	}
+ }
  
- /* data movement refcounting functions */
 +#if IPSEC_NEXUS
- static boolean_t ipsec_data_move_begin(struct ipsec_pcb *pcb);
- static void ipsec_data_move_end(struct ipsec_pcb *pcb);
+ static boolean_t
+ ipsec_data_move_begin(struct ipsec_pcb *pcb)
+ {
+@@ -4111,6 +4112,7 @@
+ 	}
+ 	lck_mtx_unlock(&pcb->ipsec_pcb_data_move_lock);
+ }
 +#endif
- static void ipsec_wait_data_move_drain(struct ipsec_pcb *pcb);
  
- /* Data path states */
+ static void
+ ipsec_data_move_drain(struct ipsec_pcb *pcb)
